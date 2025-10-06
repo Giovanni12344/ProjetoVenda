@@ -3,25 +3,38 @@ import { Link } from 'react-router-dom'
 
 export default function Header() {
     return(
-        <header className='Header'>
+        <header className='header'>
             {/* Logo */}
             <div className='logo'>
                 <Link to='/'>
-                <span className='Logo1'>G</span>
-                <span className='Logo1'>O</span>
-                <span className='Logo1'>M</span>
+                <span className='logo-1'>G</span>
+                <span className='logo-2'>O</span>
+                <span className='logo-3'>M</span>
                 </Link>
             </div>
 
             {/* Busca */}
-            <div className='seach-bar'>
+            <div className='search-bar'>
                 <input type='text' placeholder='Buscar "Apartamento"'/>
                 <div className='location'>
-                    <button className='seach-btn'>
+                    <button className='search-btn'>
                     <ion-icon name="search-outline"></ion-icon>
                     </button>
                 </div>
             </div>
+
+                {/* Botões */}
+
+                <nav className='navbar'>
+                    <ul>
+                        <li>
+                            <Link  to="/signin" className='entrarBtn'>Entrar</Link>
+                        </li>
+                        <li>
+                            <Link to="/" className='anunciarBtn'>Anunciar grátis</Link>
+                        </li>
+                    </ul>
+                </nav>
         </header>
     )
 };
