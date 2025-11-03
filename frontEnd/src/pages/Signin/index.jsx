@@ -3,25 +3,45 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebookF } from "react-icons/fa";
 import { useState } from "react";
 import { signInWithGooglePopup } from "../../fire";
+import {useNavigate} from 'react-router-dom';
+import {doLogin} from '../../lib/AuthHandler';
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function Signin() {
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const {setLogged, setUser} = useAuth();
 
   async function handleGoogleSigIn() {
     setLoading(true);
     setError(null);
 
     try {
-      const userObj = await signInWithGooglePopup();
-      setUser({
+      const result = await signInWithGooglePopup();
+
+      if(!result) {
+        throw new Error("Usuário não encontrado");
+      }
+
+      const userObj= result;
+      const token = await userObj.getIdToken();
+
+      const userData = {
         name: userObj.displayName,
         email: userObj.email,
         photoURL: userObj.photoURL,
-        uid: userObj.uid,
-      });
-      console.log("Usuario logado:", userObj);
+        uid: userObj.uid
+      }
+
+      doLogin(token, userData);
+
+      setLogged(true);
+      setUser(userData);
+      console.log('usuraio logado:', userData);
+
+      navigate('/');
+
     } catch (err) {
       console.error("Erro ao logar com o Google", err);
       setError(err.message || "Erro no login");
@@ -65,21 +85,6 @@ export default function Signin() {
 
         {error && <p style={{ color: "red", marginTop: 12 }}>{error}</p>}
 
-        {user && (
-          <div className="userInfo" style={{ marginTop: 16 }}>
-            <img
-              src={user.photoURL}
-              alt={user.name}
-              style={{ width: 48, borderRadius: "50%" }}
-            />
-            <div>
-              <p>
-                <strong>{user.nome}</strong>
-              </p>
-              <p style={{ fontSize: 12 }}>{user.email}</p>
-            </div>
-          </div>
-        )}
       </div>
       <p className="terms">
         Ao continuar, você concorda com nossos <a href="/">Termos de Serviço</a>{" "}
